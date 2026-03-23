@@ -9,10 +9,34 @@ Hệ thống giám sát tại trụ ATM ứng dụng AI (YOLOv8 & PyTorch) để
 - **CLI Processing**: Ứng dụng dòng lệnh cho mục đích xử lý offline hoặc phân tích hàng loạt video/file.
 - **Training Pipeline**: Có sẵn các script để huấn luyện lại cả YOLOv8 và mô hình học sâu phân tích bất thường một cách chủ động.
 
+## Tải Trọng số Mô hình (Model Weights)
+
+Vì file trọng số mô hình (`.pt`) khá nặng nên không được commit trực tiếp lên mã nguồn Github.
+
+👉 **Tải toàn bộ Models/Weights tại đây**: `https://thinklabs102-my.sharepoint.com/:f:/g/personal/hieuvm_thinklabs_com_vn/IgDhF7zG0VM6TrW_Rc49AWFrAdIz8101vDwZqQ6yahCHKVE?e=zCnMMh`
+> *(Sửa lại dòng chữ trong ngoặc thành Link chia sẻ trên Onedrive của bạn để người dùng có thể tải được)*
+
+### Hướng dẫn tạo thư mục và chép file Weights:
+Để chạy hệ thống, bạn chỉ cần tải 2 file trọng số (weights) và đặt đúng vào các thư mục sau:
+
+**1. Mô hình dự đoán trạng thái bất thường (Anomaly):**
+Tạo thư mục nếu chưa có:
+```bash
+mkdir -p train_anomaly/checkpoints/
+```
+Chép file weight anomaly tải về vào đường dẫn: `train_anomaly/checkpoints/best.pt`
+
+**2. Mô hình YOLOv8 (Detect):**
+Tạo thư mục nếu chưa có:
+```bash
+mkdir -p runs/detect/yolo_atm_gender13/weights/
+```
+Chép file weight YOLO tải về vào đường dẫn: `runs/detect/yolo_atm_gender13/weights/best.pt`
+
 ## Cài đặt môi trường
 
 1. Đảm bảo bạn đang sử dụng **Python 3.9+** (khuyên dùng Conda hoặc môi trường ảo ảo hoá `venv`).
-2. Tải các thư viện Python cần thiết:
+2. Cài đặt các thư viện Python theo yêu cầu:
    ```bash
    pip install -r requirements.txt
    ```
