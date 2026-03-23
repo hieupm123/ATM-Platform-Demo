@@ -14,7 +14,6 @@ Hệ thống giám sát tại trụ ATM ứng dụng AI (YOLOv8 & PyTorch) để
 Vì file trọng số mô hình (`.pt`) khá nặng nên không được commit trực tiếp lên mã nguồn Github.
 
 👉 **Tải toàn bộ Models/Weights tại đây**: `https://thinklabs102-my.sharepoint.com/:f:/g/personal/hieuvm_thinklabs_com_vn/IgDhF7zG0VM6TrW_Rc49AWFrAdIz8101vDwZqQ6yahCHKVE?e=zCnMMh`
-> *(Sửa lại dòng chữ trong ngoặc thành Link chia sẻ trên Onedrive của bạn để người dùng có thể tải được)*
 
 ### Hướng dẫn tạo thư mục và chép file Weights:
 Để chạy hệ thống, bạn chỉ cần tải 2 file trọng số (weights) và đặt đúng vào các thư mục sau:
