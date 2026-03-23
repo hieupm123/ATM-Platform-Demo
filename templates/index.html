@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI ATM Surveillance - Ngân hàng ABC</title>
+    <style>
+        :root {
+            --primary-color: #1a4f8b;
+            /* Màu xanh ngân hàng */
+            --warning-color: #e74c3c;
+            --success-color: #27ae60;
+            --bg-color: #f4f7f6;
+            --text-color: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .report-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-top: 8px solid var(--primary-color);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .status-badge {
+            background-color: var(--success-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .status-badge.alert {
+            background-color: var(--warning-color);
+        }
+
+        /* UPLOAD SECTION */
+        .upload-section {
+            background: #f8f9fa;
+            border: 2px dashed #bdc3c7;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .upload-section input[type="file"] {
+            display: none;
+        }
+
+        .btn-upload {
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+        }
+
+        .btn-action {
+            display: inline-block;
+            background: #e67e22;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-action:hover {
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* VIDEO SECTION */
+        .image-section {
+            position: relative;
+            background: #000;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 16 / 9;
+            width: 100%;
+        }
+
+        .image-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Loading Overlay */
+        #loadingOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* PAUSED Message Overlay (Now just a play icon) */
+        #pauseOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 20;
+            cursor: pointer;
+        }
+
+        .info-panel {
+            background: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #eee;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .info-panel h3 {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 10px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        /* Active Sessions Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .data-table th {
+            background-color: #f8f9fa;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+
+        .ai-analysis {
+            background: #fff9e6;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ffeaa7;
+            margin-bottom: 20px;
+            height: 150px;
+            overflow-y: auto;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #95a5a6;
+            text-align: center;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .tag-ml {
+            background: var(--warning-color);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .tag-rule {
+            background: #e67e22;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .tag-normal {
+            background: var(--success-color);
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="report-container">
+        <div class="header">
+            <div>
+                <h1>AI ATM Surveillance</h1>
+                <p style="margin: 5px 0;" id="sysInfo">Hệ thống Giám sát Thông minh - Trạng thái: Chờ tải video</p>
+            </div>
+            <div class="status-badge" id="mainBadge">BÌNH THƯỜNG</div>
+        </div>
+
+        <!-- UPLOAD SECTION -->
+        <div class="upload-section">
+            <label class="btn-upload">
+                Chọn Video / File ZIP (Folder)
+                <input type="file" id="fileInput" accept=".mp4,.avi,.zip">
+            </label>
+            <span id="fileName" style="margin-left: 15px; font-weight: bold; color: #7f8c8d;">Chưa chọn file...</span>
+        </div>
+
+        <div class="main-content">
+            <!-- VIDEO STREAM -->
+            <div class="image-section">
+                <div id="loadingOverlay">
+                    <div class="spinner"></div>
+                    <h3>Đang xử lý AI... Xin vui lòng chờ</h3>
+                </div>
+
+                <div id="pauseOverlay" onclick="resumeStream()">
+                    <div style="font-size: 80px; color: rgba(255,255,255,0.8);">&#9654;</div>
+                </div>
+
+                <img id="videoStream" src="" alt="Live CCTV Stream" style="cursor: pointer;" onclick="resumeStream()">
+            </div>
+
+            <!-- RIGHT PANEL -->
+            <div class="info-panel">
+                <div id="sideAlertBox"
+                    style="display: none; position: absolute; top: 15px; left: 15px; right: 15px; z-index: 100; background: rgba(231, 76, 60, 0.95); color: white; padding: 15px; border-radius: 5px; text-align: center; cursor: pointer; box-shadow: 0 6px 12px rgba(0,0,0,0.2);"
+                    onclick="resumeStream()">
+                    <h3 style="margin: 0 0 5px 0; border: none; padding: 0; color: white;">⚠️ CẢNH BÁO AN NINH</h3>
+                    <div style="font-size: 13px; font-weight: normal;">Hệ thống phát hiện dấu hiệu bất thường. Video đã
+                        tạm dừng. Bấm vào đây để tiếp tục.</div>
+                </div>
+
+                <h3>Camera ATM Insight</h3>
+
+                <!-- Realtime alert log table -->
+                <div style="height: 250px; overflow-y: auto;" id="alertLogScroll">
+                    <table class="data-table" id="activeTable">
+                        <thead>
+                            <tr>
+                                <th>Thời điểm</th>
+                                <th>ID</th>
+                                <th>Hành vi</th>
+                                <th>Cảnh báo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activeTableBody">
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: #999;">Chưa có cảnh báo nào
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="margin-top: 20px;">Báo Cáo Tổng Hợp (Ngày)</h3>
+                <div class="ai-analysis">
+                    <ul id="dailyReportList" style="padding-left: 20px; font-size: 14px; line-height: 1.6;">
+                        <li>Chưa có dữ liệu thống kê.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Hệ thống được vận hành bởi <b>AI-CCTV Banking Security Solution</b> (MobileNetV3+GRU Anomaly Detection)<br>
+            &copy; 2026 Ngân hàng ABC - Trí tuệ Nhân tạo hỗ trợ An ninh Tín dụng.
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const fileNameDisplay = document.getElementById('fileName');
+        const sysInfo = document.getElementById('sysInfo');
+        const mainBadge = document.getElementById('mainBadge');
+
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const pauseOverlay = document.getElementById('pauseOverlay');
+        const videoStream = document.getElementById('videoStream');
+
+        const activeTableBody = document.getElementById('activeTableBody');
+        const dailyReportList = document.getElementById('dailyReportList');
+
+        let statusInterval = null;
+        let isSingleVideo = true;
+        let currentBadgeVideo = "";
+
+        // ----- UPLOAD LOGIC -----
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            fileNameDisplay.textContent = file.name;
+            isSingleVideo = !file.name.toLowerCase().endsWith('.zip');
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // === STOP VIDEO CŨ NGAY LẬP TỨC ===
+            videoStream.src = "";        // Ngắt kết nối MJPEG khỏi browser
+            pauseOverlay.style.display = "none";
+            loadingOverlay.style.display = "flex";
+            
+            // Gọi server kill luồng stream cũ trước khi upload
+            await fetch('/stop', { method: 'POST' }).catch(() => {});
+            
+            // XÓA SẠCH THÔNG BÁO CŨ
+            document.getElementById('activeTableBody').innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">Chưa có cảnh báo nào</td></tr>';
+            document.getElementById('dailyReportList').innerHTML = '<li>Chưa có dữ liệu thống kê.</li>';
+            document.getElementById('sideAlertBox').style.display = 'none';
+            if (typeof loggedAlerts !== 'undefined') loggedAlerts.clear();
+            currentBadgeVideo = "";
+            mainBadge.className = "status-badge";
+            mainBadge.textContent = "ĐANG PHÂN TÍCH";
+
+            try {
+                const res = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await res.json();
+
+                if (result.success) {
+                    // start stream
+                    sysInfo.textContent = `Chế độ: ${result.is_folder ? 'Phân tích Folder' : 'Phân tích Video lẻ'} | Source: ${result.files} videos`;
+                    videoStream.src = "/video_feed?" + new Date().getTime();
+                    loadingOverlay.style.display = "none";
+
+                    // start polling status
+                    if (statusInterval) clearInterval(statusInterval);
+                    statusInterval = setInterval(fetchStatus, 500);
+                } else {
+                    alert("Upload failed: " + result.error);
+                    loadingOverlay.style.display = "none";
+                }
+            } catch (error) {
+                console.error("Upload error:", error);
+                alert("Lỗi kết nối.");
+                loadingOverlay.style.display = "none";
+            }
+        });
+
+        // ----- RESUME LOGIC -----
+        async function resumeStream() {
+            pauseOverlay.style.display = "none";
+            document.getElementById('sideAlertBox').style.display = "none";
+            try {
+                await fetch('/resume', { method: 'POST' });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // ----- FETCH STATUS LOGIC -----
+        async function fetchStatus() {
+            try {
+                const res = await fetch('/status');
+                const status = await res.json();
+                const data = status.data;
+
+                if (!data) return;
+
+                if (data.is_finished) {
+                    // Video finished
+                    sysInfo.textContent += " (HOÀN TẤT)";
+                    if (statusInterval) clearInterval(statusInterval);
+                    renderDailyReport(data.daily_summary);
+                    mainBadge.className = "status-badge";
+                    mainBadge.textContent = "BÁO CÁO SN";
+                    return;
+                }
+
+                // Check play state & pause UI
+                if (!status.is_playing && status.progress && !isSingleVideo) {
+                    // folder mode doesnt pause, it just continues in backend, so ignore
+                } else if (!status.is_playing && status.progress) {
+                    // Single video auto-paused
+                    pauseOverlay.style.display = "flex";
+                    document.getElementById('sideAlertBox').style.display = "block";
+                }
+
+                // Render Active Persons
+                if (data.active_sessions) {
+                    renderActiveTable(data.active_sessions, status.video_name, data.frame_idx, data.fps);
+                }
+
+                // Render Daily (Live updates!)
+                if (data.daily_summary) {
+                    renderDailyReport(data.daily_summary);
+                }
+
+                // Render Alert Badge
+                if (status.video_name && status.video_name !== currentBadgeVideo) {
+                    currentBadgeVideo = status.video_name;
+                    mainBadge.className = "status-badge";
+                    mainBadge.textContent = "BÌNH THƯỜNG";
+                }
+
+                if (data.has_anomaly_now) {
+                    mainBadge.className = "status-badge alert";
+                    mainBadge.textContent = "CẢNH BÁO AN NINH";
+                }
+
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // ----- RENDER RENDERERS -----
+        function translateBehavior(en) {
+            const trans = {
+                "transacting": "Đang giao dịch",
+                "queuing": "Xếp hàng",
+                "loitering": "Lảng vảng",
+                "suspicious": "Khả nghi",
+                "machine_contact": "Động chạm máy"
+            };
+            return trans[en] || "Không rõ";
+        }
+
+        let loggedAlerts = new Set();
+        let currentProcessedVideo = "";
+
+        function renderActiveTable(sessions, videoName, currentFrame, fps) {
+            // Đặt lại log nếu chuyển sang video mới
+            if (videoName !== currentProcessedVideo) {
+                currentProcessedVideo = videoName;
+                loggedAlerts.clear();
+                activeTableBody.innerHTML = '';
+            }
+
+            // Lọc: chỉ ghi lại những ID bị cảnh báo
+            const alertSessions = sessions.filter(s => s.is_anomaly || s.ml_flagged);
+
+            alertSessions.forEach(s => {
+                // Chỉ add vào bảng nếu ID này chưa từng được log trong video này
+                if (!loggedAlerts.has(s.track_id)) {
+                    loggedAlerts.add(s.track_id);
+
+                    // Xóa dòng "Chưa có dữ liệu" nếu đây là log đầu tiên
+                    if (loggedAlerts.size === 1) {
+                        activeTableBody.innerHTML = '';
+                    }
+
+                    let tags = '';
+                    if (s.ml_flagged) {
+                        tags += `<span class="tag-ml">🤖 AI Alert</span> `;
+                    } else if (s.is_anomaly) {
+                        tags += `<span class="tag-rule">⚠️ Cảnh báo</span>`;
+                    }
+
+                    let timeSec = (currentFrame / fps).toFixed(1) + "s";
+
+                    let tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="color:#7f8c8d; font-size:12px;">[${timeSec}]</td>
+                        <td><b>#${s.track_id}</b></td>
+                        <td>${translateBehavior(s.behaviors)}</td>
+                        <td>${tags}</td>
+                    `;
+                    activeTableBody.appendChild(tr);
+
+                    // Tự động cuộn xuống dưới cùng
+                    const scrollContainer = document.getElementById('alertLogScroll');
+                    scrollContainer.scrollTop = scrollContainer.scrollHeight;
+                }
+            });
+
+            if (loggedAlerts.size === 0 && activeTableBody.innerHTML.trim() === '') {
+                activeTableBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">Chưa có cảnh báo nào</td></tr>';
+            }
+        }
+
+        function renderDailyReport(daily) {
+            if (!daily) return;
+
+            const anomCount = daily.total_anomalies || 0;
+
+            let html = `
+            <li>Tổng khách vào khu vực: <b>${daily.total_sessions || 0} người</b></li>
+            <li style="margin-top: 10px; color: ${anomCount > 0 ? '#c0392b' : '#27ae60'}"><b>TRẠNG THÁI MÁY ATM:</b></li>
+            <ul style="padding-left:15px; margin-top:5px; margin-bottom: 5px;">
+                <li>Tổng số cảnh báo an ninh cần kiểm tra: <b style="color:#c0392b">${anomCount}</b> trường hợp</li>
+            </ul>
+        `;
+
+            // Liệt kê chi tiết
+            if (daily.anomaly_sessions && daily.anomaly_sessions.length > 0) {
+                html += `<hr style="border-top:1px dashed #ffeaa7; margin: 10px 0;">`;
+                html += `<div style="max-height: 150px; overflow-y: auto;">`;
+                daily.anomaly_sessions.forEach(a => {
+                    let badge = '⚠️';
+                    // get exactly time: hh:mm:ss -> exit using exit
+                    const exitTime = a.exit.slice(-8);
+                    html += `<div style="font-size:13px; margin-bottom:5px;"><b>• [${exitTime}] Khách #${a.track_id} ${badge}:</b> ${a.reasons[0] || 'Phát hiện bất thường'}</div>`;
+                });
+                html += `</div>`;
+            }
+
+            dailyReportList.innerHTML = html;
+        }
+
+    </script>
+</body>
+
+</html>

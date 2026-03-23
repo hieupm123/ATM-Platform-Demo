@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Mô hình & Trọng số (Weights/Models)
+*.pt
+*.pth
+*.onnx
+*.engine
+*.weights
+
+# Dữ liệu huấn luyện (Datasets & Zip/Rar)
+Dataset/
+Dataclean/
+ATM_Dataset_Cascade/
+ATMA-V/
+ATM.v1i.yolov8/
+v1/
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# Đầu ra huấn luyện (Outputs, Logs, Checkpoints)
+runs/
+output/
+train_anomaly/checkpoints/
+train_anomaly/clips/
+*.log
+
+# Môi trường & IDE
+.vscode/
+.idea/
+.env
+venv/
+env/

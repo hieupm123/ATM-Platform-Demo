@@ -1,0 +1,15 @@
+# atm_dataset.yaml
+# Cấu hình Dataset cho YOLOv8
+path: /home/hieu/Project_Demo_NganHang/ATM_Dataset_Cascade  # Đường dẫn tuyệt đối rễ của dự án
+train: images/train  # Thư mục chứa ảnh train
+val: images/val      # Thư mục chứa ảnh validation (kiểm thử)
+
+# Số lượng class (3)
+nc: 3
+
+# Tên các class (chú ý: index bắt đầu từ 0)
+# Tên này PHẢI khớp với code đã viết trong atm_core.py (chứa 'atm', 'male', 'female')
+names:
+  0: atm
+  1: male
+  2: female

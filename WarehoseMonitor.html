@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Warehouse Monitoring Report - Ngân hàng ABC</title>
+    <style>
+        :root {
+            --primary-color: #1a4f8b; /* Màu xanh ngân hàng */
+            --warning-color: #e74c3c;
+            --success-color: #27ae60;
+            --bg-color: #f4f7f6;
+            --text-color: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .report-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-top: 8px solid var(--primary-color);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: var(--primary-color);
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+
+        .status-badge {
+            background-color: var(--warning-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            animation: blinker 1.5s linear infinite;
+        }
+
+        @keyframes blinker {
+            50% { opacity: 0.5; }
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+
+        .image-section {
+            position: relative;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .image-section img {
+            width: 100%;
+            display: block;
+        }
+
+        /* Giả lập các Box Label đè lên ảnh bằng CSS (nếu không có ảnh đã vẽ sẵn) */
+        .overlay-label {
+            position: absolute;
+            border: 2px solid #f1c40f;
+            background: rgba(241, 196, 15, 0.2);
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px;
+        }
+
+        .info-panel h3 {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 10px;
+            margin-top: 0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .data-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .data-table td:first-child {
+            font-weight: bold;
+            color: #7f8c8d;
+            width: 40%;
+        }
+
+        .ai-analysis {
+            background: #fff9e6;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ffeaa7;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #95a5a6;
+            text-align: center;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .btn-action {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="report-container">
+    <div class="header">
+        <div>
+            <h1>Báo cáo Giám sát Tài sản Thế chấp</h1>
+            <p style="margin: 5px 0;">Mã vận đơn AI: #DET-99283-2026</p>
+        </div>
+        <div class="status-badge">CẢNH BÁO DI RỜI</div>
+    </div>
+
+    <div class="main-content">
+        <div class="image-section">
+            <img src="storeAlert21Mar20261736.png" alt="CCTV Warehouse Capture">
+            
+            <div style="top: 20%; left: 35%; width: 45%; height: 60%; border: 3px solid #e74c3c; position: absolute;">
+                <span style="background: #e74c3c; color: white; position: absolute; top: -25px; left: -3px; padding: 2px 10px;">[CẢNH BÁO] TÀI SẢN DI CHUYỂN</span>
+            </div>
+            <div style="top: 25%; left: 38%; width: 15%; height: 30%; border: 2px solid #3498db; position: absolute;">
+                <span style="background: #3498db; color: white; position: absolute; top: -20px; left: -2px; padding: 1px 5px; font-size: 10px;">NHÂN VIÊN: VN-082</span>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h3>Thông tin Sự kiện</h3>
+            <table class="data-table">
+                <tr><td>Khách hàng:</td><td>Công ty TNHH Logistics ThinkLabs</td></tr>
+                <tr><td>Kho bãi:</td><td>Khu A - Kệ 04 - Tầng 1</td></tr>
+                <tr><td>Thời gian:</td><td>21/03/2026 17:30:15</td></tr>
+                <tr><td>Loại hàng:</td><td>Điện tử (Thùng Carton)</td></tr>
+                <tr><td>Phương tiện:</td><td>Xe nâng điện (Reach Truck)</td></tr>
+            </table>
+
+            <h3>Phân tích AI</h3>
+            <div class="ai-analysis">
+                <p><strong>Kết quả Object Detection:</strong></p>
+                <ul style="padding-left: 20px; font-size: 14px;">
+                    <li>Phát hiện 01 xe nâng đang vận hành.</li>
+                    <li>Phát hiện 01 Pallet rời khỏi vị trí cố định.</li>
+                    <li><b>Đếm số lượng:</b> 12 thùng (Lớp mặt).</li>
+                    <li><b>Trạng thái:</b> Chưa có lệnh xuất kho khớp trên ERP.</li>
+                </ul>
+                <a href="#" class="btn-action">Trích xuất Video 60s</a>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 20px; padding: 15px; background: #ebedef; border-radius: 5px;">
+        <h4 style="margin-top: 0;">Khuyến nghị cho Cán bộ tín dụng:</h4>
+        <p style="font-size: 14px; color: #c0392b;"><b>Nguy cơ:</b> Khách hàng có dấu hiệu xuất hàng thế chấp mà không thông báo. Giá trị tài sản đảm bảo tại vị trí Kệ 04 đang giảm hụt ~150 triệu VNĐ. Cần thực hiện hậu kiểm hiện trường ngay lập tức.</p>
+    </div>
+
+    <div class="footer">
+        Hệ thống được vận hành bởi <b>AI-CCTV Banking Security Solution</b><br>
+        &copy; 2026 Ngân hàng ABC - Phòng Quản trị Rủi ro Tín dụng.
+    </div>
+</div>
+
+</body>
+</html>
