@@ -70,7 +70,6 @@ Mô hình phát hiện bất thường sử dụng module PyTorch định nghĩa
 ```bash
 python train_anomaly/train.py
 ```
-*Lưu ý: Bạn có thể cần chạy các script trích xuất dữ liệu như `prepare_dataset_v2.py` hoặc `enrich_and_resplit.py` tuỳ trạng thái dataset.*
 
 ## Cấu trúc thư mục thuật toán
 - `atm_core.py`: Lõi Pipeline toàn bộ hệ thống (detection, tracking, check behavior).
